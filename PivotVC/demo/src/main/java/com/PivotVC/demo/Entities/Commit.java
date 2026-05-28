@@ -45,4 +45,15 @@ public class Commit {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+    public String serialize() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("tree ").append(treesha).append("\n");
+        for (String parent : parentShas) {
+            sb.append("parent ").append(parent).append("\n");
+        }
+        sb.append("author ").append(author).append("\n");
+        sb.append("date ").append(timestamp.toString()).append("\n");
+        sb.append("message ").append(message).append("\n");
+        return sb.toString();
+    }
 }
