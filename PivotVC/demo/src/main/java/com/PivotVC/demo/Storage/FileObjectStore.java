@@ -10,6 +10,7 @@ public class FileObjectStore implements ObjectStore {
     @Override
     public void write(String sha, byte[] content) throws IOException {
         Path path = Paths.get(".pivot", "objects", sha);
+        Files.createDirectories(path.getParent());
         Files.write(path, content);
     }
 
