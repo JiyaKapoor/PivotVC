@@ -19,4 +19,11 @@ public class CommitService {
         String sha=shaUtils.sha1Hex(data);
         objectStore.write(sha,data);
     }
+    public Commit getCommit(String sha) throws IOException {
+        //we need to fetch the commit using its sha
+        byte[] bytes=objectStore.read(sha);
+        //now we need to deserialise this data into a commit object
+        String commitData = new String(bytes, StandardCharsets.UTF_8);
+        return Commit.deserialise(commitData,sha);
+    }
 }

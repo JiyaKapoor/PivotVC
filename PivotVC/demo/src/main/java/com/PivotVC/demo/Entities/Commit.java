@@ -1,6 +1,8 @@
 package com.PivotVC.demo.Entities;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,9 +53,32 @@ public class Commit {
         for (String parent : parentShas) {
             sb.append("parent ").append(parent).append("\n");
         }
-        sb.append("author ").append(author).append("\n");
+        sb.append("author ").append(author.getName())
+                .append(" <").append(author.getEmailId()).append(">")
+                .append("\n");
         sb.append("date ").append(timestamp.toString()).append("\n");
         sb.append("message ").append(message).append("\n");
         return sb.toString();
+    }
+    public static Commit deserialise(String data,String sha){
+        String treeSha=null;
+        List<String> parentShas=new ArrayList<>();
+        String message=null;
+        User author=null;
+        LocalDateTime timestamp=null;
+        for (String line : data.split("\n")) {
+            if (line.startsWith("tree "))         treeSha   = line.substring(5).trim();
+            else if (line.startsWith("parent "))  parentShas.add(line.substring(7).trim());
+            else if (line.startsWith("author ")) {
+                String value = line.substring(7).trim();
+                String username = value.substring(0, value.indexOf("<")).trim();
+                String email = value.substring(value.indexOf("<") + 1, value.indexOf(">")).trim();
+                author = new User(username, email);
+            }
+            else if (line.startsWith("date "))    timestamp = LocalDateTime.parse(line.substring(5).trim());
+            else if (line.startsWith("message ")) message   = line.substring(8).trim();
+        }
+
+        return new Commit(sha, treeSha, parentShas, message, author, timestamp);
     }
 }
