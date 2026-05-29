@@ -3,16 +3,17 @@ package com.PivotVC.demo.Service;
 import com.PivotVC.demo.Entities.Commit;
 import com.PivotVC.demo.Entities.ShaUtils;
 import com.PivotVC.demo.Storage.ObjectStore;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class CommitService {
-    @Autowired
-    private ShaUtils shaUtils;
-    @Autowired
-    private ObjectStore objectStore;
+    private final ShaUtils shaUtils;
+    private final ObjectStore objectStore;
+    public CommitService(ShaUtils shaUtils,ObjectStore objectStore){
+        this.objectStore=objectStore;
+        this.shaUtils=shaUtils;
+    }
     public void commit(Commit commit) throws IOException {
         String serialisedCommit=commit.serialize();
         byte[] data = serialisedCommit.getBytes(StandardCharsets.UTF_8);

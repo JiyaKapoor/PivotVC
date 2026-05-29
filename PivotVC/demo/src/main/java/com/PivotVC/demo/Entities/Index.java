@@ -12,8 +12,9 @@ public class Index {
     public void addEntry(String filepath,String sha){
         indexMap.put(filepath,sha);
     }
-    public void clearMap(){
+    public void clearMap() throws IOException {
         indexMap.clear();
+        this.save();
     }
     public HashMap<String,String> getEntries(){
         return this.indexMap;
