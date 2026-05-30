@@ -7,15 +7,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class Commit {
-    private String sha;
     private String treesha;
     private List<String> parentShas;
     private String message;
     private User author;
     private LocalDateTime timestamp;
-    public Commit(String sha, String treeSha, List<String> parentShas,
+    public Commit(String treeSha, List<String> parentShas,
                   String message, User author, LocalDateTime timestamp) {
-        this.sha         = sha;
         this.treesha     = treeSha;
         this.message     = message;
         this.author      = author;
@@ -23,9 +21,6 @@ public class Commit {
         this.parentShas  = Collections.unmodifiableList(
                 parentShas != null ? parentShas : List.of()
         );
-    }
-    public String getSha() {
-        return sha;
     }
 
     public String getTreeSha() {
@@ -79,6 +74,6 @@ public class Commit {
             else if (line.startsWith("message ")) message   = line.substring(8).trim();
         }
 
-        return new Commit(sha, treeSha, parentShas, message, author, timestamp);
+        return new Commit(treeSha, parentShas, message, author, timestamp);
     }
 }

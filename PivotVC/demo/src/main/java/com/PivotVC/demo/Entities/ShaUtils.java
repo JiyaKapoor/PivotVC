@@ -9,7 +9,7 @@ public final class ShaUtils {
     private ShaUtils() {
 
     }
-    public static String sha1Hex(byte[] data) {
+    public String sha1Hex(byte[] data) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             byte[] hash = digest.digest(data);
@@ -23,7 +23,7 @@ public final class ShaUtils {
         }
     }
 
-    public static String sha1Hex(String data) {
+    public String sha1Hex(String data) {
         return sha1Hex(data.getBytes(StandardCharsets.UTF_8));
     }
 }
