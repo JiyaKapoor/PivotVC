@@ -54,4 +54,7 @@ public class CommitService {
         String commitData = new String(bytes, StandardCharsets.UTF_8);
         return Commit.deserialise(commitData,sha);
     }
+    public List<Commit> log(){
+
+    }
 }
