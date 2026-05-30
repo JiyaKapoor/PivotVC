@@ -39,15 +39,19 @@ public class CommitService {
         String serialisedContent=treeNode.serialize();
         byte[] treeBytes=serialisedContent.getBytes(StandardCharsets.UTF_8);
         //now we can generate a sha for it
-        String sha=shaUtils.sha1Hex(serialisedContent);
-        objectStore.write(sha,treeBytes);
+        String treeSha=shaUtils.sha1Hex(serialisedContent);
+        objectStore.write(treeSha,treeBytes);
         //now we just build and store the commit
         String parent=Head.loadHead();
         List<String> parentCommit=new ArrayList<>();
         if(parent!=null)parentCommit.add(parent);
-        Commit commit=new Commit(sha,parentCommit,message,author, LocalDateTime.now());
+        Commit commit=new Commit(treeSha,parentCommit,message,author, LocalDateTime.now());
+        String serialisedCommit = commit.serialize();
+        String commitSha=shaUtils.sha1Hex(serialisedCommit);
+        //saving the commit object on the disk
+        objectStore.write(commitSha,serialisedCommit.getBytes(StandardCharsets.UTF_8));
         //update the head
-        Head.updateHead(sha);
+        Head.updateHead(commitSha);
     }
     public Commit getCommit(String sha) throws IOException {
         //we need to fetch the commit using its sha
