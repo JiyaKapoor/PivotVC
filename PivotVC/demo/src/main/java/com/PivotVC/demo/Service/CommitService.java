@@ -5,10 +5,10 @@ import com.PivotVC.demo.Storage.ObjectStore;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class CommitService {
     private final ShaUtils shaUtils;
@@ -44,8 +44,10 @@ public class CommitService {
         //now we just build and store the commit
         String parent=Head.loadHead();
         List<String> parentCommit=new ArrayList<>();
-        parentCommit.add(parent);
+        if(parent!=null)parentCommit.add(parent);
         Commit commit=new Commit(sha,parentCommit,message,author, LocalDateTime.now());
+        //update the head
+        Head.updateHead(sha);
     }
     public Commit getCommit(String sha) throws IOException {
         //we need to fetch the commit using its sha
@@ -54,7 +56,29 @@ public class CommitService {
         String commitData = new String(bytes, StandardCharsets.UTF_8);
         return Commit.deserialise(commitData,sha);
     }
-    public List<Commit> log(){
-
+    public List<Commit> log() throws IOException {
+        //we first need to go to the current branch that we are on
+        List<Commit> commitLog=new ArrayList<>();
+        Queue<String> q=new LinkedList<>();
+        Set<String> vis=new HashSet<>();
+        String currCommit=Head.loadHead();
+        q.add(currCommit);
+        vis.add(currCommit);
+        //traversal
+        while(!q.isEmpty()){
+            String latestCommit=q.poll();
+            Path commitPath=Path.of(".pivot","objects",latestCommit);
+            String commitContent= Files.readString(commitPath);
+            Commit commit=Commit.deserialise(commitContent,latestCommit);
+            commitLog.add(commit);
+            List<String> parentShas=commit.getParentShas();
+            for(String parentCommit:parentShas){
+                if(!vis.contains(parentCommit)){
+                    q.add(parentCommit);
+                    vis.add(parentCommit);
+                }
+            }
+        }
+        return commitLog;
     }
 }
