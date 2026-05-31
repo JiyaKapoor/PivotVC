@@ -35,7 +35,7 @@ public class Branch {
         if(!Files.exists(branchPath)) return null;
         return new Branch(branchName,latestCommitSha);
     }
-    public List<Branch> getBranches() throws IOException {
+    public static List<Branch> getBranches() throws IOException {
         List<Branch> currBranches=new ArrayList<>();
         for(Path p:Files.list(Path.of(".pivot","refs","heads")).toList()){
             currBranches.add(Branch.loadBranch(p.getFileName().toString()));
