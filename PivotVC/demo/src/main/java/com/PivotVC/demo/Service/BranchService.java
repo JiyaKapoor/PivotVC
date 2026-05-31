@@ -22,7 +22,7 @@ public class BranchService {
         //we basically need to update the HEAD file to contain the ref of this file
         Branch branch=Branch.loadBranch(BranchName);
         if(branch==null)System.out.println("No such branch exists");
-        Files.writeString(Path.of(".pivot","head"),Path.of(".pivot","refs","head",BranchName).toString());
+        Files.writeString(Path.of(".pivot","HEAD"),Path.of(".pivot","refs","head",BranchName).toString());
         System.out.println("Switched to branch-"+ BranchName);
     }
 }
