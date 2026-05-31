@@ -23,7 +23,7 @@ public final class ShaUtils {
         }
     }
 
-    public String sha1Hex(String data) {
+    public static String sha1Hex(String data) {
         return sha1Hex(data.getBytes(StandardCharsets.UTF_8));
     }
 }

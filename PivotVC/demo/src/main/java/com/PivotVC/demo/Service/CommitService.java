@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.PivotVC.demo.Service.TreeService.buildTree;
+
 public class CommitService {
     private final ShaUtils shaUtils;
     private final ObjectStore objectStore;
@@ -24,28 +26,17 @@ public class CommitService {
             System.out.println("Please run: pivot config --username <name> --email <email>");
             return;
         }
-        //this method first loads the index
-        Index index=Index.load();
-        HashMap<String,String> indexMap=index.getEntries();
-        //now it traverses through all the files in this indexMap to get the sha for each of them
-        //need to build a tree now :))
-        List<TreeEntry> entries=new ArrayList<>();
-        for(String filePath:indexMap.keySet()){
-            String sha=indexMap.get(filePath);
-            entries.add(new TreeEntry(EntryType.BLOB,sha,filePath));
-        }
-        TreeNode treeNode=new TreeNode(entries);
         //now we need to serialise the treeNode object in order to generate a sha for it and store it on the disk
-        String serialisedContent=treeNode.serialize();
-        byte[] treeBytes=serialisedContent.getBytes(StandardCharsets.UTF_8);
-        //now we can generate a sha for it
-        String treeSha=shaUtils.sha1Hex(serialisedContent);
-        objectStore.write(treeSha,treeBytes);
+        TreeNode node=buildTree();
+        String serialisedContent=node.serialize();
+        String sha=ShaUtils.sha1Hex(serialisedContent);
+        byte[] treeBytes=serialisedContent.getBytes();
+        objectStore.write(sha,treeBytes);
         //now we just build and store the commit
         String parent=Head.loadHead();
         List<String> parentCommit=new ArrayList<>();
         if(parent!=null)parentCommit.add(parent);
-        Commit commit=new Commit(treeSha,parentCommit,message,author, LocalDateTime.now());
+        Commit commit=new Commit(sha,parentCommit,message,author, LocalDateTime.now());
         String serialisedCommit = commit.serialize();
         String commitSha=shaUtils.sha1Hex(serialisedCommit);
         //saving the commit object on the disk
