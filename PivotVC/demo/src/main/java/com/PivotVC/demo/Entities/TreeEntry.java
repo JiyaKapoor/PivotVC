@@ -14,4 +14,16 @@ public class TreeEntry {
     public EntryType getType() { return type; }
     public String getSha()     { return sha; }
     public String getName()    { return name; }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TreeEntry)) return false;
+        TreeEntry e = (TreeEntry) o;
+        return Objects.equals(name, e.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }

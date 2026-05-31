@@ -1,18 +1,17 @@
 package com.PivotVC.demo.Entities;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 public class TreeNode {
-    private List<TreeEntry> entries;
-    public TreeNode(List<TreeEntry> entries) {
-        this.entries = Collections.unmodifiableList(
-                entries != null ? entries : List.of()
-        );
+    private HashSet<TreeEntry> entries;
+    public TreeNode(HashSet<TreeEntry> entries) {
+        this.entries = entries;
     }
 
-    public List<TreeEntry> getEntries() {
+    public HashSet<TreeEntry> getEntries() {
         return entries;
     }
     public String serialize(){
@@ -24,4 +23,5 @@ public class TreeNode {
         }
         return sb.toString();
     }
+
 }
