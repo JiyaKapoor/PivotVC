@@ -1,9 +1,6 @@
 package com.PivotVC.demo.Entities;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class TreeNode {
     private HashSet<TreeEntry> entries;
@@ -22,6 +19,13 @@ public class TreeNode {
                     .append(treeEntry.getSha()).append("/n");
         }
         return sb.toString();
+    }
+    public Map<String, String> toMap() {
+        Map<String, String> map = new HashMap<>();
+        for (TreeEntry entry : this.getEntries()) {
+            map.put(entry.getName(), entry.getSha()); // name is already the full path
+        }
+        return map;
     }
 
 }
