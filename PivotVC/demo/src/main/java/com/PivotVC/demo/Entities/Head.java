@@ -19,8 +19,9 @@ public class Head {
     }
     public static void updateHead(String updatedSha) throws IOException {
         String content=Files.readString(head_path).trim();
-        if(content.startsWith("ref/")){
-            Path branchPath=Path.of(".pivot",content);
+        if(content.startsWith("ref:")){
+            String refPath = content.substring(5).trim();
+            Path branchPath = Path.of(".pivot", refPath);
             Files.createDirectories(branchPath.getParent());
             Files.writeString(branchPath,updatedSha);
         }
