@@ -10,13 +10,13 @@ import java.nio.file.Path;
 
 public class StagingAreaService {
     private FileObjectStore objectStore;
-    private Index index;
-    private ShaUtils shaUtil;
+    private static Index index;
+    private static ShaUtils shaUtil;
     public StagingAreaService(FileObjectStore fileObjectStore,Index index,ShaUtils utils) throws IOException {
         this.objectStore=fileObjectStore;
         this.index=Index.load();
     }
-    public void stageFile(Path filePath) throws IOException {
+    public static void stageFile(Path filePath) throws IOException {
         //step 1 is to generate sha for it
         byte[] bytes= Files.readAllBytes(filePath);
         String sha=shaUtil.sha1Hex(bytes);
