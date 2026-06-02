@@ -7,23 +7,25 @@ import com.PivotVC.demo.Storage.FileObjectStore;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class StagingAreaService {
     private FileObjectStore objectStore;
-    private static Index index;
-    private static ShaUtils shaUtil;
-    public StagingAreaService(FileObjectStore fileObjectStore,Index index,ShaUtils utils) throws IOException {
-        this.objectStore=fileObjectStore;
-        this.index=Index.load();
-    }
+
     public static void stageFile(Path filePath) throws IOException {
         //step 1 is to generate sha for it
         byte[] bytes= Files.readAllBytes(filePath);
-        String sha=shaUtil.sha1Hex(bytes);
-        index.addEntry(filePath.toString(), sha);
+        String sha=ShaUtils.sha1Hex(bytes);
+        Index index=Index.load();
+        Path relative = Paths.get("")
+                .toAbsolutePath()
+                .relativize(filePath.toAbsolutePath());
+
+        index.addEntry(relative.toString(), sha);
         index.save();
     }
     public void clearStagingArea() throws IOException {
+        Index index=loadIndex();
         index.clearMap();
     }
     public Index loadIndex() throws IOException {
