@@ -1,6 +1,7 @@
 package com.PivotVC.demo.Service;
 
 import com.PivotVC.demo.Entities.*;
+import com.PivotVC.demo.Storage.FileObjectStore;
 import com.PivotVC.demo.Storage.ObjectStore;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class CommitService {
         this.objectStore=objectStore;
         this.shaUtils=shaUtils;
     }
-    public void commit(String message) throws IOException {
+    public static void commit(String message) throws IOException {
         //validating the user
         User author=Config.loadConfig();
         if(author==null){
@@ -31,16 +32,18 @@ public class CommitService {
         String serialisedContent=node.serialize();
         String sha=ShaUtils.sha1Hex(serialisedContent);
         byte[] treeBytes=serialisedContent.getBytes();
-        objectStore.write(sha,treeBytes);
+        FileObjectStore fileObjectStore=new FileObjectStore();
+        fileObjectStore.write(sha,treeBytes);
         //now we just build and store the commit
         String parent=Head.loadHead();
         List<String> parentCommit=new ArrayList<>();
         if(parent!=null)parentCommit.add(parent);
         Commit commit=new Commit(sha,parentCommit,message,author, LocalDateTime.now());
         String serialisedCommit = commit.serialize();
-        String commitSha=shaUtils.sha1Hex(serialisedCommit);
+
+        String commitSha=ShaUtils.sha1Hex(serialisedCommit);
         //saving the commit object on the disk
-        objectStore.write(commitSha,serialisedCommit.getBytes(StandardCharsets.UTF_8));
+        fileObjectStore.write(commitSha,serialisedCommit.getBytes(StandardCharsets.UTF_8));
         //update the head
         Head.updateHead(commitSha);
     }

@@ -13,21 +13,25 @@ public class TreeService {
         Index index=Index.load();
         HashMap<String,String> indexMap=index.getEntries();
         HashSet<TreeEntry> entries=new LinkedHashSet<>();
-        String branchName=Files.readString(Path.of(".pivot","HEAD")).substring(10);
+        String head = Files.readString(Path.of(".pivot", "HEAD")).trim();
+        String branchName = head.substring(head.lastIndexOf('/') + 1);
         // refs/head/
-        String latestCommit=Files.readString(Path.of(".pivot","refs","heads",branchName));
+        String latestCommit=Files.readString(Path.of(".pivot","refs","heads",branchName)).trim();
         for(String filePath:indexMap.keySet()){
             String sha=indexMap.get(filePath);
             entries.add(new TreeEntry(EntryType.BLOB,sha,filePath));
         }
+        index.clearMap();
         //there are already files in the branch
-        Commit commit=Commit.deserialise(Files.readString(Path.of(".pivot","objects",latestCommit)),latestCommit);
-        String treeSha=commit.getTreeSha();
-        HashMap<String,String> currTree=new HashMap<>();
-        flattenTree(treeSha,"",currTree);
-        for(String filePath:currTree.keySet()){
-            String sha=currTree.get(filePath);
-            entries.add(new TreeEntry(EntryType.BLOB,sha,filePath));
+        if(!latestCommit.isBlank()){
+            Commit commit=Commit.deserialise(Files.readString(Path.of(".pivot","objects",latestCommit)),latestCommit);
+            String treeSha=commit.getTreeSha();
+            HashMap<String,String> currTree=new HashMap<>();
+            flattenTree(treeSha,"",currTree);
+            for(String filePath:currTree.keySet()){
+                String sha=currTree.get(filePath);
+                entries.add(new TreeEntry(EntryType.BLOB,sha,filePath));
+            }
         }
         TreeNode node=new TreeNode(entries);
         return node;
@@ -62,5 +66,4 @@ public class TreeService {
             }
         }
     }
-
 }

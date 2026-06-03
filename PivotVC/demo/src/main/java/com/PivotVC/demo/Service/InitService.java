@@ -13,6 +13,10 @@ public class InitService {
         if(!Files.exists(headPath)) {
             Files.writeString(headPath, "ref: refs/heads/main\n");
         }
+        Path mainBranch = Path.of(".pivot", "refs", "heads", "main");
+        if (!Files.exists(mainBranch)) {
+            Files.createFile(mainBranch);
+        }
         System.out.println("Initialized empty repository in .pivot/");
     }
 }

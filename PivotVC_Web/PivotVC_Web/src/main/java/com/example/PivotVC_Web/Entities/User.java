@@ -1,6 +1,7 @@
-package com.PivotVC.demo.Entities;
+package com.example.PivotVC_Web.Entities;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity

@@ -7,7 +7,9 @@ import picocli.CommandLine.Command;
         name = "pivot",
         subcommands = {
                 InitCommand.class,
-                addCommand.class
+                addCommand.class,
+                CommitCommand.class,
+                ConfigCommand.class
         }
 )
 public class PivotCommand {
